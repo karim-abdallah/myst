@@ -9,3 +9,11 @@
 #
 # Written by Karim Abdallah on Wednesday, 11 December 2019.
 ##
+
+
+def initializePump ():
+    print("Pump Succesfully Initialized")
+
+def initializeChirp ():
+    print("Chirp Successfully Initialized")
+

@@ -10,3 +10,15 @@
 #
 # Written by Karim Abdallah on Wednesday, 11 December 2019.
 ##
+
+from machine import Pin
+
+pump = Pin(5, Pin.OUT)
+
+  
+def pump_on():
+    pump.on()
+
+def pump_off():
+    pump.off()
+

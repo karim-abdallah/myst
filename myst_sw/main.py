@@ -7,14 +7,14 @@
 # Written by Karim Abdallah on Saturday,  7 December 2019.
 #/
 
-from machine import Pin
-from time import sleep
 import network
+from time import sleep
+
+from initialize import *
+from pump import *
 
 networkSSID = 'iRobot-Guest'
 networkPsswd = ''
-
-pump = Pin(5, Pin.OUT)
 
 networkConTimeout = 10
 networkTmrInc = 0.1
@@ -23,12 +23,6 @@ squirtDuration = 5 # How long should the pump squirt for
 
 class NetworkError(BaseException):
     pass
-
-def initializePump ():
-    print("Pump Succesfully Initialized")
-
-def initializeChirp ():
-    print("Chirp Successfully Initialized")
 
 def configureNetwork ():
     
@@ -50,21 +44,7 @@ def configureNetwork ():
     else:
         print("Network Succesfully Configured.")
         print("network config:", wlan.ifconfig())
-  
-def pump_on():
-    pump.on()
 
-def pump_off():
-    pump.off()
-
-def squirt(duration):
-
-    print("Squirt Squirt")
-    pump_on()
-    sleep(duration)
-    pump_off()
-
-    return True
 
 def main():
 
