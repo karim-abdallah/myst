@@ -1,5 +1,8 @@
 ##
-# myst_main.py -- *insert short description* 
+# myst_main.py -- Where it all begins...
+#
+# On a less glamorous note, this file was renaimed main.py on December 2019 for
+# compatibility with micropython. Will revisit this once we scale up.
 #
 # Written by Karim Abdallah on Saturday,  7 December 2019.
 #/
@@ -11,10 +14,12 @@ import network
 networkSSID = 'iRobot-Guest'
 networkPsswd = ''
 
-motor = Pin(5, Pin.OUT)
+pump = Pin(5, Pin.OUT)
 
 networkConTimeout = 10
 networkTmrInc = 0.1
+
+squirtDuration = 5 # How long should the pump squirt for
 
 class NetworkError(BaseException):
     pass
@@ -46,7 +51,20 @@ def configureNetwork ():
         print("Network Succesfully Configured.")
         print("network config:", wlan.ifconfig())
   
+def pump_on():
+    pump.on()
 
+def pump_off():
+    pump.off()
+
+def squirt(duration):
+
+    print("Squirt Squirt")
+    pump_on()
+    sleep(duration)
+    pump_off()
+
+    return True
 
 def main():
 
@@ -55,9 +73,7 @@ def main():
     initializeChirp()
 
     while True:
-        print("motor switch")
-        motor.value(not motor.value())
-        sleep(5)
+        squirt(squirtDuration)
 
 if __name__ == "__main__":
 
