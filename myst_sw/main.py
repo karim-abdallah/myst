@@ -16,7 +16,7 @@ from initialize import *
 from pump import *
 from connectivity import *
 
-squirtDuration_sec = 5 # How long the pump should squirt for
+squirtDuration_sec = 2*60 # How long the pump should squirt for
 
 rtc = machine.RTC()
 
@@ -33,17 +33,9 @@ secIndex = 6
 # TODO: make this list user-appendable. This should be a feature in the future (scheduling)
 # Potentially also expand it to which day of the week (might be tricky but worth the try)
 
-# Test Script:
-
-hourSchedule = [0, 35, 59] # in seconds. Would want to squirt 3 times during 1 minute
-daySchedule = 2 # basically every 2 minutes we do this and restart the cycle
-hourMaximum = 59 # restart the cycle every
-
-### UNCOMMENT LATER WHEN TEST PASSED
-
-# hourSchedule = [13, 15, 20] # in UTC time (for NY time, substract 6 hours]
-# daySchedule = 4 # for now, fixed interval for squirting.
-# hourMaximum = 23 # designates when we've reached the end of a watering period
+hourSchedule = [13, 15, 20] # in UTC time (for NY time, substract 6 hours]
+daySchedule = 4 # for now, fixed interval for squirting.
+hourMaximum = 23 # designates when we've reached the end of a watering period
 
 # TODO: create wrappers around rtc.datetime()[hour... to ease of writing
 
@@ -59,28 +51,7 @@ def rtcSec():
 def printTime():
     print("the time right now is: ", rtc.datetime()[hourIndex], "h ", rtc.datetime()[minIndex], "min and ", rtc.datetime()[secIndex], "seconds")
 
-## dateToHours converts a given date to an absolute count of hours.
-#  This is used to keep an absolute track of time and make sure if values roll over
-#  we don't get caught offguard
-#
-#  intput: a tuple of the form (year, month, day, unknown_value, hour, minute, second, milisecond)
-#
-#  output: an integer representing absolute time in hours.
-
-# TODO: adjust the math on date[yearIndex] to substract the "birth year" because we dont need to remember that absolute of terms and can reduce the value of the multiplication
-
-def dateToHours(*date):
-    print("received the following info: hour = ", date[hourIndex])
-
-    sumHours = (date[yearIndex]-2019)*365*24 + date[monthIndex]*3
-    return sumHours
-
-interval = 0
-
-def incrementInterval():
-
-    interval += 1
-
+    
 def main():
 
     configureNetwork()
@@ -112,19 +83,17 @@ def main():
 
     print ("Starting Main application. It's Moist.")
 
-    dayNow = minNow ### REMOVE THIS ARTER TESTING DONE
-    hourNow = secNow ### IBID
     while True:
 
         # Begin to countdown the time. Keep track of every day change and increment the relevant counter.
         # When we've reached our scheduled day, flag and count the hours.
         # When we've reached our scheduled our, squirt. Keep doing so until the full 24 hour period has
         # elapsed, after which reset the our counter and return to keeping track of the days elapsed.
-        if ((rtc.datetime()[minIndex] - dayNow) is not 0): ### REVERT BACK TO DAYINDEX ONCE TESTING DONE
+        if ((rtc.datetime()[dayIndex] - dayNow) is not 0):
             print ("One more day passed")
             dayCounter += 1
             print("Day counter = ", dayCounter)
-            dayNow = rtc.datetime()[minIndex] ### REVERT BACK TO DAYINDEX ONCE TESTING DONE
+            dayNow = rtc.datetime()[dayIndex]
             printTime()
 
         # TODO: try implementing logic that allows for scheduling by day of the week. With a list for example.
@@ -136,13 +105,13 @@ def main():
             print ("Today, we water!")
             waterToday_b = True
             dayCounter = 0
-            hourNow = rtc.datetime()[secIndex] ### REVERT BACK TO HOURINDEX ONCE TESTING DONE
+            hourNow = rtc.datetime()[hourIndex]
             printTime()
 
-        if (waterToday_b and ((rtc.datetime()[secIndex] - hourNow) is not 0)): ### IBID
+        if (waterToday_b and ((rtc.datetime()[hourIndex] - hourNow) is not 0)): 
             print ("One more hour passed")
             hourCounter += 1
-            hourNow = rtc.datetime()[secIndex]
+            hourNow = rtc.datetime()[hourIndex]
             printTime()
 
         if (waterToday_b and (hourCounter in hourSchedule)):
