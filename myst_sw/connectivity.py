@@ -11,16 +11,28 @@ from time import sleep
 networkSSID = 'iRobot-Guest'
 networkPsswd = ''
 
-networkConTimeout = 10
-networkTmrInc = 0.1
+# This is a timeout for attempting to connect to a network. We'll wait for networkConTimeout_s
+# and "sleep" the system for as long as the "networkTmrInc_s". This way once we reach the total
+# networkConTimeout_s duration, we've considered that the network connection timed out.
+
+# network variables are in Seconds.
+
+networkConTimeout_s = 10 
+networkTmrInc_s = 0.1
+
+wlan = network.WLAN(network.STA_IF)
+
 
 class NetworkError(BaseException):
     pass
 
+def isConnected():
+    return wlan.isconnected()
+
 
 def configureNetwork ():
     
-    wlan = network.WLAN(network.STA_IF)
+    #wlan = network.WLAN(network.STA_IF)
     networkTimer = 0;
     
     wlan.active(True)
@@ -29,9 +41,9 @@ def configureNetwork ():
         print("connecting to network", networkSSID, networkPsswd)
         wlan.connect(networkSSID, networkPsswd)
 
-    while (not wlan.isconnected() and networkTimer < networkConTimeout):
-        sleep(networkTmrInc)
-        networkTimer += networkTmrInc
+    while (not wlan.isconnected() and networkTimer < networkConTimeout_s):
+        sleep(networkTmrInc_s)
+        networkTimer += networkTmrInc_s
         
     if not wlan.isconnected():
         print("Couldn't connect to the network")
