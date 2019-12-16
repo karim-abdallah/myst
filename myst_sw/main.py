@@ -110,26 +110,16 @@ def main():
 
     printTime()
 
-    #rtc.irq(rtc.ALARM0, incrementInterval())
-    #rtc.alarm(rtc.ALARM0, 60000, True)
-
     print ("Starting Main application. It's Moist.")
 
     dayNow = minNow ### REMOVE THIS ARTER TESTING DONE
-    hourNow = secNow ### IBIDp
+    hourNow = secNow ### IBID
     while True:
 
-        # TODO: in the future, need to bulletproof this by creating a function that
-        # converts the date to an absolute value in hours. Otherwise if we're at hour = 23
-        # and the next day comes, the comparison of hour to hour will not work anymore, unless
-        # it's absolute value of total hours elapsed since beginning of time.
-#        if (dayNow - rtc.datetime() > 4):
-#           squirt(squirtDuration_sec)
-#           dayNow = rtc.datetime()
-        # TODO: try with if (!...) as in, trigger if the minute value is not the same as previously saved. Might
-        # be the best trick altogether. Although if we have a failure somewhere it'll go forever. Think through
-        # what might go wrong...
-        
+        # Begin to countdown the time. Keep track of every day change and increment the relevant counter.
+        # When we've reached our scheduled day, flag and count the hours.
+        # When we've reached our scheduled our, squirt. Keep doing so until the full 24 hour period has
+        # elapsed, after which reset the our counter and return to keeping track of the days elapsed.
         if ((rtc.datetime()[minIndex] - dayNow) is not 0): ### REVERT BACK TO DAYINDEX ONCE TESTING DONE
             print ("One more day passed")
             dayCounter += 1
@@ -137,7 +127,7 @@ def main():
             dayNow = rtc.datetime()[minIndex] ### REVERT BACK TO DAYINDEX ONCE TESTING DONE
             printTime()
 
-        # TODO: try implementing logic that allows for scheduling. With a list for example.
+        # TODO: try implementing logic that allows for scheduling by day of the week. With a list for example.
         # The only thing to figure out is how to reset the day counter once we reach the end of the week
         # Harder to do than hours because we have to make sure we're still watering. Maybe reset the day
         # counter at the end of the 23 hour period.
