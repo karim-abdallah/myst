@@ -9,13 +9,15 @@ It ran in my apartment and a couple of friends' homes: a pump on a fixed schedul
 ```
 myst_sw/
 ├── main.py           # scheduling loop, RTC handling, entry point
-├── hal.py            # pin assignment and pump on/off — the only file that knows the board
+├── hal.py            # pin assignment and pump on/off
 ├── pump.py           # timed actuation
 ├── connectivity.py   # WiFi association, connection state
 ├── initialize.py     # boot-time hardware checks
 ├── sensors.py        # stub — see below
 └── user.py           # stub — see below
 ```
+
+`hal.py` keeps the pin numbers and the pump primitives in one place, so `pump.py` never names a pin — though `main.py` still reaches for `machine` directly to get at the RTC, so the abstraction is only half-applied.
 
 The network isn't there for remote control, it's there for the clock. On boot the device associates with WiFi and pulls time over NTP; without a network it falls back to a fixed epoch and the schedule runs blind. `connectivity.py` keeps the WLAN handle module-global so the rest of the code can ask `isConnected()` without touching the radio again — `main()` uses that to decide whether the clock can be trusted.
 
